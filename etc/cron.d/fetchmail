@@ -1,0 +1,1 @@
+0/5 * * * * fetchmail -v -f /etc/request-tracker4/fetchmail

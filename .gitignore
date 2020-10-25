@@ -1,0 +1,3 @@
+.*.swp
+/mysql-initdb.d/
+.env

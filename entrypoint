@@ -1,0 +1,56 @@
+#!/bin/bash
+
+chmod 700 /etc/request-tracker4/fetchmail
+chmod 600 /etc/request-tracker4/msmtp_wrapper.conf
+
+## Environment Config ##
+
+if [ $rt_ssl = "yes" ]; then
+	rt_ssl="https"
+else
+	rt_ssl="http"
+fi
+
+vars=(
+	'rt_domain'
+	'rt_org'
+	'rt_ssl'
+	'web_path'
+	'web_base_port'
+	'rt_correspond_address'
+	'rt_comment_address'
+
+	'db_type'
+	'db_host'
+	'db_port'
+	'db_user'
+	'db_password'
+	'db_name'
+
+	'mail_server'
+	'mail_proto'
+	'mail_username'
+	'mail_password'
+	'mail_ssl'
+
+	'smtp_enabled'
+	'smtp_host'
+	'smtp_port'
+	'smtp_tls'
+	'smtp_auth'
+	'smtp_user'
+	'smtp_password'
+)
+
+for i in "${vars[@]}"; do
+	find /etc/request-tracker4 -type f -print0 | xargs -0 sed -i -e "s|@$i@|${!i}|g"
+done
+
+if [ $smtp_enabled = "yes" ]; then
+	echo 'Set($SendmailPath , "/etc/request-tracker4/msmtp_wrapper");' >> etc/request-tracker4/RT_SiteConfig.d/50-debconf.pm
+	echo "SMTP configured"
+else
+	echo "Not configuring SMTP"
+fi
+
+/usr/sbin/rt-setup-database --action init --dba $db_user --dba-password $db_password --skip-create

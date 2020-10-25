@@ -1,0 +1,6 @@
+poll @mail_server@ protocol @mail_proto@ 
+   user "@mail_username@"
+   password '@mail_password@'
+   mda "/usr/bin/rt-mailgate --url @rt_ssl@://@rt_domain@:@web_base_port@ --queue general  --action correspond"
+   keep
+   @mail_ssl@
